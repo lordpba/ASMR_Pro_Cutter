@@ -39,6 +39,9 @@ video_input/
 # Logs
 *.log
 
+# Settings
+settings.json
+
 # Temporary files
 *.tmp
 temp/

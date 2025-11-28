@@ -3,10 +3,13 @@ from tkinter import ttk, filedialog, messagebox, scrolledtext
 import threading
 import os
 import sys
+import json
 from pathlib import Path
 
 # Import main logic
 import main
+
+SETTINGS_FILE = "settings.json"
 
 
 class ASMRCutterGUI:
@@ -30,6 +33,9 @@ class ASMRCutterGUI:
         self.audio_bitrate = tk.StringVar(value=main.AUDIO_BITRATE)
         self.threads = tk.IntVar(value=main.THREADS)
         self.processing = False
+        
+        # Load saved settings if exist
+        self.load_settings()
         
         self.setup_ui()
         
@@ -277,6 +283,21 @@ class ASMRCutterGUI:
             width=12
         ).grid(row=3, column=1, sticky=tk.W, padx=10)
         tk.Label(encoding_grid, text="(Number of CPU threads for encoding)", font=("Segoe UI", 8, "italic"), fg="#666").grid(row=3, column=2, sticky=tk.W, padx=10)
+        
+        # Save settings button
+        save_settings_btn = tk.Button(
+            main_frame,
+            text="💾  Save Settings",
+            command=self.save_settings,
+            font=("Segoe UI", 9),
+            bg="#5c5c5c",
+            fg="white",
+            cursor="hand2",
+            relief=tk.FLAT,
+            padx=15,
+            pady=8
+        )
+        save_settings_btn.pack(fill=tk.X, pady=(0, 10))
         
         # Clip info duration
         self.clip_info = tk.Label(
