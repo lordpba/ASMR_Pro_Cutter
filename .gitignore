@@ -1,0 +1,50 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+.venv/
+venv/
+ENV/
+env/
+.virtualenv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Project specific
+video_input/
+*_shorts/
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.MP4
+*.MOV
+*.AVI
+*.MKV
+*.wav
+*.WAV
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+temp/
+.temp/
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
