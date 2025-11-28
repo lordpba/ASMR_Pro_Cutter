@@ -1,51 +1,51 @@
 # 🎬 ASMR Pro Cutter
 
-Strumento automatico per tagliare e creare clip ASMR da video lunghi, con analisi audio intelligente basata su AI per identificare i momenti migliori.
+Automatic tool to cut and create ASMR clips from long videos, with AI-based intelligent audio analysis to identify the best moments.
 
 ![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
-## ✨ Caratteristiche
+## ✨ Features
 
-- 🎯 **Analisi audio intelligente** - Rileva automaticamente i migliori trigger ASMR (click, tap, crunch)
-- 🎨 **Interfaccia grafica moderna** - GUI intuitiva con tkinter
-- ⚡ **Accelerazione GPU** - Supporto NVIDIA NVENC per encoding ultra-rapido
-- 🎞️ **Qualità preservata** - Mantiene la qualità del video sorgente (2K/4K)
-- 📊 **Parametri personalizzabili** - Durata clip, pre/post-roll regolabili
-- 🗂️ **Output organizzato** - Salva automaticamente clip con timestamp ordinati
+- 🎯 **Intelligent audio analysis** - Automatically detects the best ASMR triggers (clicks, taps, crunches)
+- 🎨 **Modern graphical interface** - Intuitive GUI with tkinter
+- ⚡ **GPU acceleration** - NVIDIA NVENC support for ultra-fast encoding
+- 🎞️ **Quality preserved** - Maintains source video quality (2K/4K)
+- 📊 **Customizable parameters** - Adjustable clip duration, pre/post-roll
+- 🗂️ **Organized output** - Automatically saves clips with ordered timestamps
 
-## 🎵 Come funziona
+## 🎵 How it works
 
-Il programma analizza l'audio del video usando tre metriche:
+The program analyzes video audio using three metrics:
 
-1. **Spectral Centroid** - Identifica la brillantezza dei suoni
-2. **Onset Strength** - Rileva l'impatto e l'improvvisità dei trigger
-3. **Zero Crossing Rate** - Trova suoni acuti metallici/plastici
+1. **Spectral Centroid** - Identifies sound brightness
+2. **Onset Strength** - Detects trigger impact and suddenness
+3. **Zero Crossing Rate** - Finds sharp metallic/plastic sounds
 
-Combina questi parametri per creare un indice di "croccantezza" (crispness) e seleziona automaticamente i momenti migliori.
+It combines these parameters to create a "crispness" index and automatically selects the best moments.
 
-## 📦 Installazione
+## 📦 Installation
 
-### Prerequisiti
+### Prerequisites
 
-- Python 3.8 o superiore
-- GPU NVIDIA (opzionale, per accelerazione hardware)
-- FFmpeg (installato automaticamente con `imageio-ffmpeg`)
+- Python 3.8 or higher
+- NVIDIA GPU (optional, for hardware acceleration)
+- FFmpeg (automatically installed with `imageio-ffmpeg`)
 
 ### Setup
 
-1. **Clona il repository**
+1. **Clone the repository**
 ```bash
-git clone https://github.com/tuousername/ASMR-Pro-Cutter.git
+git clone https://github.com/lordpba/ASMR-Pro-Cutter.git
 cd ASMR-Pro-Cutter
 ```
 
-2. **Crea un ambiente virtuale (consigliato)**
+2. **Create a virtual environment (recommended)**
 ```bash
 python -m venv .venv
 ```
 
-3. **Attiva l'ambiente virtuale**
+3. **Activate the virtual environment**
 
 Windows:
 ```powershell
@@ -57,115 +57,118 @@ Linux/Mac:
 source .venv/bin/activate
 ```
 
-4. **Installa le dipendenze**
+4. **Install dependencies**
 ```bash
 pip install -r requirements.txt
 ```
 
-## 🚀 Utilizzo
+## 🚀 Usage
 
-### Interfaccia Grafica (Consigliato)
+### Graphical Interface (Recommended)
 
 ```bash
 python gui.py
 ```
 
-1. Clicca su "Seleziona Video" e scegli il tuo video ASMR
-2. (Opzionale) Seleziona una cartella di output personalizzata
-3. Regola i parametri se necessario:
-   - **Durata totale target**: Durata totale dei clip combinati (~58s per Shorts)
-   - **Pre-roll**: Secondi prima del trigger (default 1.2s)
-   - **Post-roll**: Secondi dopo il trigger (default 1.3s)
-4. Clicca "AVVIA PROCESSING"
-5. I clip verranno salvati in `nomevideo_shorts/` con nomi ordinati
+1. Click "Select Video" and choose your ASMR video
+2. (Optional) Select a custom output folder
+3. Adjust parameters if needed:
+   - **Total target duration**: Total duration of combined clips (~58s for Shorts)
+   - **Pre-roll**: Seconds before trigger (default 1.2s)
+   - **Post-roll**: Seconds after trigger (default 1.3s)
+   - **Final clip extra**: Extra seconds for last clip closing shot (default 2.0s)
+4. Click "START PROCESSING"
+5. Clips will be saved to `videoname_shorts/` with ordered names
 
-### Linea di Comando
+### Command Line
 
 ```bash
 python main.py
 ```
 
-Metti i video in `video_input/` e il programma processerà automaticamente tutti i file video trovati.
+Place videos in `video_input/` and the program will automatically process all found video files.
 
-## 📁 Struttura Output
+## 📁 Output Structure
 
 ```
-tuo_video_shorts/
+your_video_shorts/
 ├── clip_001_at_0045s.mp4
 ├── clip_002_at_0123s.mp4
 ├── clip_003_at_0189s.mp4
 └── ...
 ```
 
-I file sono nominati con numero progressivo e timestamp per facile ordinamento negli editor video.
+Files are named with progressive number and timestamp for easy sorting in video editors.
 
-## ⚙️ Parametri Avanzati
+## ⚙️ Advanced Parameters
 
-Puoi modificare direttamente in `main.py`:
+You can modify directly in `main.py` or use the GUI's advanced section:
 
 ```python
-TARGET_DURATION = 58.0   # Durata totale target (secondi)
-PRE_ROLL = 1.2          # Secondi prima del trigger
-POST_ROLL = 1.3         # Secondi dopo del trigger
-MIN_FREQ = 1800         # Frequenza minima per filtraggio (Hz)
+TARGET_DURATION = 58.0   # Total target duration (seconds)
+PRE_ROLL = 1.2          # Seconds before trigger
+POST_ROLL = 1.3         # Seconds after trigger
+FINAL_CLIP_EXTRA = 2.0  # Extra seconds for last clip
+MIN_FREQ = 1800         # Minimum frequency for filtering (Hz)
+HOP_LENGTH = 512        # Audio analysis precision
 ```
 
-### Parametri GPU/Qualità
+### GPU/Quality Parameters
 
-Nel codice di encoding (linea ~146):
+In encoding code (line ~146):
 
-- **CQ Value** (`-cq 18`): Qualità costante
-  - `0` = Lossless (file enormi)
-  - `18` = Quasi lossless, ottimo compromesso (default)
-  - `23` = Alta qualità
-  - `28` = Media qualità
+- **CQ Value** (`-cq 18`): Constant quality
+  - `0` = Lossless (huge files)
+  - `18` = Near lossless, excellent compromise (default)
+  - `23` = High quality
+  - `28` = Medium quality
   
-- **Preset NVENC** (`preset="slow"`):
-  - `fast` = Veloce, qualità media
-  - `medium` = Bilanciato
-  - `slow` = Massima qualità (default)
+- **NVENC Preset** (`preset="slow"`):
+  - `fast` = Fast, medium quality
+  - `medium` = Balanced
+  - `slow` = Maximum quality (default)
 
-## 🎥 Formati Supportati
+## 🎥 Supported Formats
 
 - **Input**: MP4, MOV, AVI, MKV
 - **Output**: MP4 (H.264 + AAC)
-- **Audio**: AAC 320kbps (massima qualità per ASMR)
-- **Video**: H.264 NVENC CQ18 (quasi lossless)
+- **Audio**: AAC 320kbps (maximum quality for ASMR)
+- **Video**: H.264 NVENC CQ18 (near lossless)
 
-## 💡 Consigli
+## 💡 Tips
 
-- Per video 4K, assicurati di avere almeno 8GB di RAM
-- L'encoding GPU è ~10-20x più veloce ma richiede NVIDIA GPU
-- Usa pre-roll più lungo (2-3s) per video con movimenti lenti
-- Riduci `TARGET_DURATION` per clip più selettivi
+- For 4K videos, ensure you have at least 8GB of RAM
+- GPU encoding is ~10-20x faster but requires NVIDIA GPU
+- Use longer pre-roll (2-3s) for videos with slow movements
+- Reduce `TARGET_DURATION` for more selective clips
 
 ## 🐛 Troubleshooting
 
-**Errore "No module named 'moviepy'"**
+**Error "No module named 'moviepy'"**
 ```bash
 pip install -r requirements.txt
 ```
 
-**Errore NVENC non disponibile**
-- Fallback automatico su libx264 (CPU)
-- Assicurati di avere driver NVIDIA aggiornati
+**NVENC not available error**
+- Automatic fallback to libx264 (CPU)
+- Make sure you have updated NVIDIA drivers
 
-**Audio non rilevato**
-- Verifica che il video abbia traccia audio
-- Prova ad abbassare il parametro `MIN_FREQ`
+**Audio not detected**
+- Verify the video has an audio track
+- Try lowering the `MIN_FREQ` parameter
 
-## 📄 Licenza
+## 📄 License
 
-MIT License - Vedi [LICENSE](LICENSE) per dettagli
+MIT License - See [LICENSE](LICENSE) for details
 
-## 🤝 Contributi
+## 🤝 Contributing
 
-Pull request benvenute! Per modifiche importanti, apri prima un'issue.
+Pull requests are welcome! For major changes, please open an issue first.
 
-## 👨‍💻 Autore
+## 👨‍💻 Author
 
-Creato con ❤️ per la community ASMR
+Created with ❤️ for the ASMR community
 
 ---
 
-**⭐ Se ti piace questo progetto, lascia una stella su GitHub!**
+**⭐ If you like this project, leave a star on GitHub!**
