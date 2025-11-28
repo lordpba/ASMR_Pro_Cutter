@@ -13,7 +13,7 @@ class ASMRCutterGUI:
     def __init__(self, root):
         self.root = root
         self.root.title("ASMR Pro Cutter")
-        self.root.geometry("850x750")
+        self.root.geometry("850x950")
         self.root.resizable(True, True)
         
         # Variables
@@ -25,6 +25,10 @@ class ASMRCutterGUI:
         self.final_clip_extra = tk.DoubleVar(value=main.FINAL_CLIP_EXTRA)
         self.min_freq = tk.IntVar(value=main.MIN_FREQ)
         self.hop_length = tk.IntVar(value=main.HOP_LENGTH)
+        self.encoding_preset = tk.StringVar(value=main.ENCODING_PRESET)
+        self.encoding_quality = tk.StringVar(value=main.ENCODING_QUALITY)
+        self.audio_bitrate = tk.StringVar(value=main.AUDIO_BITRATE)
+        self.threads = tk.IntVar(value=main.THREADS)
         self.processing = False
         
         self.setup_ui()
@@ -206,6 +210,74 @@ class ASMRCutterGUI:
         ).grid(row=1, column=1, sticky=tk.W, padx=10)
         tk.Label(advanced_grid, text="(Audio analysis precision - lower = more precise)", font=("Segoe UI", 8, "italic"), fg="#666").grid(row=1, column=2, sticky=tk.W, padx=10)
         
+        # Encoding settings
+        encoding_frame = tk.LabelFrame(main_frame, text="🎞️ Encoding Settings", font=("Segoe UI", 10, "bold"), padx=10, pady=10)
+        encoding_frame.pack(fill=tk.X, pady=(0, 10))
+        
+        encoding_grid = tk.Frame(encoding_frame)
+        encoding_grid.pack(fill=tk.X)
+        
+        # GPU Preset
+        tk.Label(encoding_grid, text="GPU Preset:", font=("Segoe UI", 9)).grid(row=0, column=0, sticky=tk.W, pady=5)
+        preset_combo = ttk.Combobox(
+            encoding_grid,
+            textvariable=self.encoding_preset,
+            values=["nvidia", "intel", "amd"],
+            state="readonly",
+            font=("Segoe UI", 9),
+            width=12
+        )
+        preset_combo.grid(row=0, column=1, sticky=tk.W, padx=10)
+        
+        # Codec info label
+        self.codec_info = tk.Label(encoding_grid, text="Codec: h264_nvenc", font=("Segoe UI", 8, "italic"), fg="#0078d4")
+        self.codec_info.grid(row=0, column=2, sticky=tk.W, padx=10)
+        
+        # Update codec info when preset changes
+        def update_codec_info(*args):
+            preset = self.encoding_preset.get()
+            codec = main.GPU_PRESETS.get(preset, main.GPU_PRESETS["nvidia"])["codec"]
+            self.codec_info.config(text=f"Codec: {codec}")
+        
+        self.encoding_preset.trace_add("write", update_codec_info)
+        
+        # Quality
+        tk.Label(encoding_grid, text="Quality (CQ):", font=("Segoe UI", 9)).grid(row=1, column=0, sticky=tk.W, pady=5)
+        tk.Spinbox(
+            encoding_grid,
+            from_=0,
+            to=51,
+            textvariable=self.encoding_quality,
+            font=("Segoe UI", 9),
+            width=12
+        ).grid(row=1, column=1, sticky=tk.W, padx=10)
+        tk.Label(encoding_grid, text="(0=lossless, 18=near lossless, 23=high, 28=medium)", font=("Segoe UI", 8, "italic"), fg="#666").grid(row=1, column=2, sticky=tk.W, padx=10)
+        
+        # Audio bitrate
+        tk.Label(encoding_grid, text="Audio bitrate:", font=("Segoe UI", 9)).grid(row=2, column=0, sticky=tk.W, pady=5)
+        audio_combo = ttk.Combobox(
+            encoding_grid,
+            textvariable=self.audio_bitrate,
+            values=["128k", "192k", "256k", "320k"],
+            state="readonly",
+            font=("Segoe UI", 9),
+            width=12
+        )
+        audio_combo.grid(row=2, column=1, sticky=tk.W, padx=10)
+        tk.Label(encoding_grid, text="(320k = maximum quality for ASMR)", font=("Segoe UI", 8, "italic"), fg="#666").grid(row=2, column=2, sticky=tk.W, padx=10)
+        
+        # Threads
+        tk.Label(encoding_grid, text="Threads:", font=("Segoe UI", 9)).grid(row=3, column=0, sticky=tk.W, pady=5)
+        tk.Spinbox(
+            encoding_grid,
+            from_=1,
+            to=16,
+            textvariable=self.threads,
+            font=("Segoe UI", 9),
+            width=12
+        ).grid(row=3, column=1, sticky=tk.W, padx=10)
+        tk.Label(encoding_grid, text="(Number of CPU threads for encoding)", font=("Segoe UI", 8, "italic"), fg="#666").grid(row=3, column=2, sticky=tk.W, padx=10)
+        
         # Clip info duration
         self.clip_info = tk.Label(
             params_grid, 
@@ -313,6 +385,10 @@ class ASMRCutterGUI:
         main.FINAL_CLIP_EXTRA = self.final_clip_extra.get()
         main.MIN_FREQ = self.min_freq.get()
         main.HOP_LENGTH = self.hop_length.get()
+        main.ENCODING_PRESET = self.encoding_preset.get()
+        main.ENCODING_QUALITY = self.encoding_quality.get()
+        main.AUDIO_BITRATE = self.audio_bitrate.get()
+        main.THREADS = self.threads.get()
         
         # Start in separate thread
         self.processing = True

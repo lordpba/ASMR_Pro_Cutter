@@ -19,6 +19,39 @@ FINAL_CLIP_EXTRA = 2.0  # Extra seconds for last clip (closing shot)
 MIN_FREQ = 1800   # Hz. Filter out low frequencies. We only want the "snap".
 HOP_LENGTH = 512  # Constant hop for syncing time/frames in features
 
+# Encoding parameters
+ENCODING_PRESET = "nvidia"  # Options: "nvidia", "intel", "amd"
+VIDEO_CODEC = "h264_nvenc"
+ENCODING_QUALITY = "18"  # CQ value for constant quality
+AUDIO_BITRATE = "320k"
+THREADS = 4
+ENCODING_SPEED = "slow"  # Preset speed: slow, medium, fast
+
+# GPU Presets
+GPU_PRESETS = {
+    "nvidia": {
+        "codec": "h264_nvenc",
+        "quality_param": "-cq",
+        "quality_value": "18",
+        "preset": "slow",
+        "extra_params": ["-profile:v", "high", "-rc:v", "vbr", "-gpu", "0"]
+    },
+    "intel": {
+        "codec": "h264_qsv",
+        "quality_param": "-global_quality",
+        "quality_value": "18",
+        "preset": "slow",
+        "extra_params": ["-profile:v", "high"]
+    },
+    "amd": {
+        "codec": "h264_amf",
+        "quality_param": "-qp_i",
+        "quality_value": "18",
+        "preset": "quality",
+        "extra_params": ["-profile:v", "high", "-quality", "quality"]
+    }
+}
+
 def calculate_crispness_index(y, sr, hop_length: int = HOP_LENGTH):
     """
     Calculate the 'Crispness' index.
@@ -137,24 +170,27 @@ def generate_asmr_short(video_path, output_folder):
         time_marker = f"{int(t_event):04d}s"
         output_filename = os.path.join(output_folder, f"clip_{idx:03d}_at_{time_marker}.mp4")
         
+        # Get encoding preset
+        preset = GPU_PRESETS.get(ENCODING_PRESET, GPU_PRESETS["nvidia"])
+        
+        # Build ffmpeg parameters
+        ffmpeg_params = [
+            "-pix_fmt", "yuv420p",
+            preset["quality_param"], preset["quality_value"],
+            "-b:a", AUDIO_BITRATE,
+        ] + preset["extra_params"]
+        
         try:
             sub.write_videofile(
                 output_filename,
-                codec="h264_nvenc",  # NVIDIA GPU Encoder
+                codec=preset["codec"],
                 audio_codec="aac",
                 fps=clip.fps,  # Keep original FPS
-                preset="slow",  # For NVENC: slow = maximum quality
-                bitrate=None,  # Disable fixed bitrate
-                threads=4,
+                preset=preset["preset"],
+                bitrate=None,  # Disable fixed bitrate for quality-based encoding
+                threads=THREADS,
                 logger=None,
-                ffmpeg_params=[
-                    "-pix_fmt", "yuv420p",
-                    "-cq", "18",  # Constant quality (18 = near lossless, like 2K source)
-                    "-b:a", "320k",  # AAC audio 320kbps (maximum quality for ASMR)
-                    "-profile:v", "high",  # H.264 High profile
-                    "-rc:v", "vbr",  # Variable bitrate for optimal quality
-                    "-gpu", "0"  # Use first GPU
-                ]
+                ffmpeg_params=ffmpeg_params
             )
             print(f"  ✓ Clip {idx}/{len(final_timestamps)}: {output_filename}")
         except Exception as e:
