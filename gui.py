@@ -16,7 +16,7 @@ class ASMRCutterGUI:
     def __init__(self, root):
         self.root = root
         self.root.title("ASMR Pro Cutter")
-        self.root.geometry("850x950")
+        self.root.geometry("850x1000")
         self.root.resizable(True, True)
         
         # Variables
@@ -38,6 +38,51 @@ class ASMRCutterGUI:
         self.load_settings()
         
         self.setup_ui()
+    
+    def save_settings(self):
+        """Save current settings to JSON file"""
+        settings = {
+            "target_duration": self.target_duration.get(),
+            "pre_roll": self.pre_roll.get(),
+            "post_roll": self.post_roll.get(),
+            "final_clip_extra": self.final_clip_extra.get(),
+            "min_freq": self.min_freq.get(),
+            "hop_length": self.hop_length.get(),
+            "encoding_preset": self.encoding_preset.get(),
+            "encoding_quality": self.encoding_quality.get(),
+            "audio_bitrate": self.audio_bitrate.get(),
+            "threads": self.threads.get()
+        }
+        try:
+            with open(SETTINGS_FILE, 'w') as f:
+                json.dump(settings, f, indent=2)
+            self.log("✅ Settings saved successfully")
+            messagebox.showinfo("Success", "Settings saved successfully!")
+        except Exception as e:
+            self.log(f"❌ Error saving settings: {e}")
+            messagebox.showerror("Error", f"Could not save settings: {e}")
+    
+    def load_settings(self):
+        """Load settings from JSON file"""
+        if not os.path.exists(SETTINGS_FILE):
+            return
+        
+        try:
+            with open(SETTINGS_FILE, 'r') as f:
+                settings = json.load(f)
+            
+            self.target_duration.set(settings.get("target_duration", main.TARGET_DURATION))
+            self.pre_roll.set(settings.get("pre_roll", main.PRE_ROLL))
+            self.post_roll.set(settings.get("post_roll", main.POST_ROLL))
+            self.final_clip_extra.set(settings.get("final_clip_extra", main.FINAL_CLIP_EXTRA))
+            self.min_freq.set(settings.get("min_freq", main.MIN_FREQ))
+            self.hop_length.set(settings.get("hop_length", main.HOP_LENGTH))
+            self.encoding_preset.set(settings.get("encoding_preset", main.ENCODING_PRESET))
+            self.encoding_quality.set(settings.get("encoding_quality", main.ENCODING_QUALITY))
+            self.audio_bitrate.set(settings.get("audio_bitrate", main.AUDIO_BITRATE))
+            self.threads.set(settings.get("threads", main.THREADS))
+        except Exception as e:
+            print(f"Error loading settings: {e}")
         
     def setup_ui(self):
         # Header
@@ -336,12 +381,13 @@ class ASMRCutterGUI:
         
         self.log_text = scrolledtext.ScrolledText(
             log_frame,
-            font=("Consolas", 9),
+            font=("Consolas", 10),
             bg="#1e1e1e",
             fg="#d4d4d4",
             insertbackground="white",
             wrap=tk.WORD,
-            state=tk.DISABLED
+            state=tk.DISABLED,
+            height=20
         )
         self.log_text.pack(fill=tk.BOTH, expand=True)
         
