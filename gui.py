@@ -11,6 +11,25 @@ import main
 
 SETTINGS_FILE = "settings.json"
 
+class TextRedirector:
+    def __init__(self, text_widget, root):
+        self.text_widget = text_widget
+        self.root = root
+
+    def write(self, string):
+        self.root.after(0, lambda: self._insert(string))
+
+    def _insert(self, string):
+        try:
+            self.text_widget.config(state=tk.NORMAL)
+            self.text_widget.insert(tk.END, string)
+            self.text_widget.see(tk.END)
+            self.text_widget.config(state=tk.DISABLED)
+        except:
+            pass
+
+    def flush(self):
+        pass
 
 class ASMRCutterGUI:
     def __init__(self, root):
@@ -375,6 +394,10 @@ class ASMRCutterGUI:
         )
         self.process_btn.pack(fill=tk.X)
         
+        # Progress bar
+        self.progress = ttk.Progressbar(main_frame, mode='indeterminate')
+        self.progress.pack(fill=tk.X, pady=(0, 10))
+        
         # 5. Log Output
         log_frame = tk.LabelFrame(main_frame, text="📋 Log", font=("Segoe UI", 10, "bold"), padx=10, pady=10)
         log_frame.pack(fill=tk.BOTH, expand=True)
@@ -390,10 +413,6 @@ class ASMRCutterGUI:
             height=20
         )
         self.log_text.pack(fill=tk.BOTH, expand=True)
-        
-        # Progress bar
-        self.progress = ttk.Progressbar(main_frame, mode='indeterminate')
-        self.progress.pack(fill=tk.X, pady=(10, 0))
         
         self.log("✅ Ready. Select a video and press START PROCESSING.")
         self.log("💡 If you don't select an output folder, it will be created automatically in the same folder as the video.")
@@ -470,18 +489,18 @@ class ASMRCutterGUI:
     
     def run_processing(self):
         try:
-            # Redirect stdout to capture prints
-            import io
-            from contextlib import redirect_stdout
+            # Redirect stdout to capture prints in real-time
+            from contextlib import redirect_stdout, redirect_stderr
             
             output_folder = self.output_folder.get() if self.output_folder.get() else None
             
-            f = io.StringIO()
-            with redirect_stdout(f):
+            # Create redirector
+            redirector = TextRedirector(self.log_text, self.root)
+            
+            # Redirect both stdout and stderr to the log window
+            with redirect_stdout(redirector), redirect_stderr(redirector):
                 result_folder = main.process_single_video(self.input_video.get(), output_folder)
             
-            output = f.getvalue()
-            self.root.after(0, lambda: self.log(output))
             self.root.after(0, lambda: self.log(f"\n✅ Clips saved to: {result_folder}"))
             self.root.after(0, lambda: messagebox.showinfo("Completed", f"Processing completed!\n\nClips saved to:\n{result_folder}"))
             
