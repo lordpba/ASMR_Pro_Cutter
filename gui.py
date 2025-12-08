@@ -4,6 +4,7 @@ import threading
 import os
 import sys
 import json
+import webbrowser
 from pathlib import Path
 
 # Import main logic
@@ -56,7 +57,81 @@ class ASMRCutterGUI:
         # Load saved settings if exist
         self.load_settings()
         
+        self.create_menu()
         self.setup_ui()
+    
+    def create_menu(self):
+        menubar = tk.Menu(self.root)
+        self.root.config(menu=menubar)
+        
+        # File Menu
+        file_menu = tk.Menu(menubar, tearoff=0)
+        menubar.add_cascade(label="File", menu=file_menu)
+        file_menu.add_command(label="Save Settings", command=self.save_settings)
+        file_menu.add_command(label="Load Settings", command=self.load_settings)
+        file_menu.add_separator()
+        file_menu.add_command(label="Exit", command=self.root.quit)
+        
+        # Help Menu
+        help_menu = tk.Menu(menubar, tearoff=0)
+        menubar.add_cascade(label="Help", menu=help_menu)
+        help_menu.add_command(label="Guide / Instructions", command=self.show_guide)
+        help_menu.add_command(label="Support & Request Feature", command=self.show_support)
+        help_menu.add_separator()
+        help_menu.add_command(label="About", command=self.show_about)
+
+    def show_support(self):
+        msg = "If you want to request a new feature or need support, please consider buying me a coffee!\n\n" \
+              "Write your request in the donation comment.\n" \
+              "My commitment to adding features is fueled by coffee! ☕\n\n" \
+              "Click OK to open the donation page."
+        if messagebox.askokcancel("Support & Request Feature", msg, icon='info'):
+            self.open_coffee()
+
+    def show_guide(self):
+        guide_text = """
+ASMR Pro Cutter - Quick Guide
+
+1. Select Source Video:
+   Choose your long ASMR video file (MP4, MOV, etc.).
+
+2. Output Folder (Optional):
+   If left empty, a new folder will be created automatically in the same location as the video.
+
+3. Clip Parameters:
+   - Total target duration: The desired length of the final short (e.g., 58s).
+   - Pre-roll: Seconds to include BEFORE the detected sound (click/snap).
+   - Post-roll: Seconds to include AFTER the detected sound.
+   - Final clip extra: Extra time added to the very last clip for a smooth ending.
+
+4. Advanced Parameters:
+   - Min frequency: Filter out low rumbles. Higher values focus on sharp clicks.
+   - Hop length: Precision of audio analysis.
+
+5. Encoding Settings:
+   - GPU Preset: Choose your GPU brand (NVIDIA, Intel, AMD) for hardware acceleration.
+   - Quality (CQ): Lower is better quality (0-51). 18 is near lossless.
+   - Audio bitrate: 320k is recommended for ASMR.
+
+6. Start Processing:
+   Click the green button and wait. The log will show progress.
+        """
+        messagebox.showinfo("Guide / Instructions", guide_text)
+
+    def show_about(self):
+        about_text = """
+ASMR Pro Cutter v1.0
+Created by lordpba
+
+An automated tool to extract crisp ASMR triggers from long videos and compile them into YouTube Shorts.
+
+Features:
+- Smart audio analysis to find clicks/snaps
+- GPU accelerated encoding (NVIDIA/Intel/AMD)
+- High quality audio preservation
+- Batch processing ready
+        """
+        messagebox.showinfo("About", about_text)
     
     def save_settings(self):
         """Save current settings to JSON file"""
@@ -105,7 +180,7 @@ class ASMRCutterGUI:
         
     def setup_ui(self):
         # Header
-        header_frame = tk.Frame(self.root, bg="#2b2b2b", height=70)
+        header_frame = tk.Frame(self.root, bg="#2b2b2b", height=80)
         header_frame.pack(fill=tk.X, padx=0, pady=0)
         header_frame.pack_propagate(False)
         
@@ -348,21 +423,6 @@ class ASMRCutterGUI:
         ).grid(row=3, column=1, sticky=tk.W, padx=10)
         tk.Label(encoding_grid, text="(Number of CPU threads for encoding)", font=("Segoe UI", 8, "italic"), fg="#666").grid(row=3, column=2, sticky=tk.W, padx=10)
         
-        # Save settings button
-        save_settings_btn = tk.Button(
-            main_frame,
-            text="💾  Save Settings",
-            command=self.save_settings,
-            font=("Segoe UI", 9),
-            bg="#5c5c5c",
-            fg="white",
-            cursor="hand2",
-            relief=tk.FLAT,
-            padx=15,
-            pady=8
-        )
-        save_settings_btn.pack(fill=tk.X, pady=(0, 10))
-        
         # Clip info duration
         self.clip_info = tk.Label(
             params_grid, 
@@ -518,6 +578,9 @@ class ASMRCutterGUI:
         self.processing = False
         self.process_btn.config(state=tk.NORMAL, text="▶️  START PROCESSING", bg="#107c10")
         self.progress.stop()
+
+    def open_coffee(self):
+        webbrowser.open("https://buymeacoffee.com/mariopbay")
 
 
 def main_gui():
