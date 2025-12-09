@@ -14,6 +14,10 @@ Automatic tool to cut and create ASMR clips from long videos, with AI-based inte
 - 📊 **Customizable parameters** - Adjustable clip duration, pre/post-roll
 - 🗂️ **Organized output** - Automatically saves clips with ordered timestamps
 
+## 🖥️ Interface
+
+![ASMR Pro Cutter Interface](GUI%20ASMR%20PRO%20CUTTER.png)
+
 ## 🎵 How it works
 
 The program analyzes video audio using three metrics:
