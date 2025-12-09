@@ -59,7 +59,11 @@ source .venv/bin/activate
 
 4. **Install dependencies**
 ```bash
-pip install -r requirements.txt
+pip install .
+```
+*Or for development:*
+```bash
+pip install -e .
 ```
 
 ## 🚀 Usage
@@ -157,17 +161,29 @@ pip install -r requirements.txt
 - Verify the video has an audio track
 - Try lowering the `MIN_FREQ` parameter
 
+## ☕ Support the Project
+
+If you find this tool useful for your content creation, please consider supporting its development!
+
+<a href="https://www.buymeacoffee.com/mariopbay" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+
+## 🌟 Credits
+
+If you use ASMR Pro Cutter for your videos, we'd love to see them! 
+Feel free to mention **"Made with ASMR Pro Cutter"** in your video description to help others discover this tool.
+
 ## 📄 License
 
 MIT License - See [LICENSE](LICENSE) for details
 
 ## 🤝 Contributing
 
-Pull requests are welcome! For major changes, please open an issue first.
+Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 
 ## 👨‍💻 Author
 
-Created with ❤️ for the ASMR community
+Created with ❤️ by **lordpba** for the ASMR community
 
 ---
 

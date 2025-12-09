@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "asmr-pro-cutter"
+version = "1.0.0"
+description = "Automatic tool to cut and create ASMR clips from long videos"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+authors = [
+    {name = "lordpba"}
+]
+dependencies = [
+    "numpy",
+    "scipy",
+    "librosa",
+    "moviepy==1.0.3",
+    "imageio-ffmpeg",
+    "tk"
+]
+
+[project.urls]
+"Homepage" = "https://github.com/lordpba/ASMR-Pro-Cutter"
+"Bug Tracker" = "https://github.com/lordpba/ASMR-Pro-Cutter/issues"
+
+[project.scripts]
+asmr-cutter = "gui:main_gui"
+asmr-cutter-cli = "main:process_all_videos"
