@@ -52,6 +52,7 @@ class ASMRCutterGUI:
         self.encoding_quality = tk.StringVar(value=main.ENCODING_QUALITY)
         self.audio_bitrate = tk.StringVar(value=main.AUDIO_BITRATE)
         self.threads = tk.IntVar(value=main.THREADS)
+        self.merge_clips = tk.BooleanVar(value=main.MERGE_CLIPS)
         self.processing = False
         
         # Load saved settings if exist
@@ -145,7 +146,8 @@ Features:
             "encoding_preset": self.encoding_preset.get(),
             "encoding_quality": self.encoding_quality.get(),
             "audio_bitrate": self.audio_bitrate.get(),
-            "threads": self.threads.get()
+            "threads": self.threads.get(),
+            "merge_clips": self.merge_clips.get()
         }
         try:
             with open(SETTINGS_FILE, 'w') as f:
@@ -175,6 +177,7 @@ Features:
             self.encoding_quality.set(settings.get("encoding_quality", main.ENCODING_QUALITY))
             self.audio_bitrate.set(settings.get("audio_bitrate", main.AUDIO_BITRATE))
             self.threads.set(settings.get("threads", main.THREADS))
+            self.merge_clips.set(settings.get("merge_clips", main.MERGE_CLIPS))
         except Exception as e:
             print(f"Error loading settings: {e}")
         
@@ -263,6 +266,16 @@ Features:
             padx=10,
             pady=5
         ).pack(side=tk.RIGHT)
+        
+        # Merge clips option
+        tk.Checkbutton(
+            output_frame,
+            text="Merge all clips into a single video file",
+            variable=self.merge_clips,
+            font=("Segoe UI", 9),
+            onvalue=True,
+            offvalue=False
+        ).pack(anchor=tk.W, pady=(5, 0))
         
         # 3. Parameters
         params_frame = tk.LabelFrame(main_frame, text="⚙️ Clip Parameters", font=("Segoe UI", 10, "bold"), padx=10, pady=10)
@@ -535,6 +548,7 @@ Features:
         main.ENCODING_QUALITY = self.encoding_quality.get()
         main.AUDIO_BITRATE = self.audio_bitrate.get()
         main.THREADS = self.threads.get()
+        main.MERGE_CLIPS = self.merge_clips.get()
         
         # Start in separate thread
         self.processing = True

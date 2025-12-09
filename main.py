@@ -2,7 +2,7 @@ import os
 import tempfile
 import numpy as np
 import librosa
-from moviepy.editor import VideoFileClip
+from moviepy.editor import VideoFileClip, concatenate_videoclips
 from scipy.signal import find_peaks
 
 # --- DIRECTOR PARAMETERS (Tweak these to change the "feel") ---
@@ -14,6 +14,7 @@ TARGET_DURATION = 58.0  # Target duration for final short
 PRE_ROLL = 1.2    # Seconds to show BEFORE the click
 POST_ROLL = 1.3   # Seconds to show AFTER the click
 FINAL_CLIP_EXTRA = 2.0  # Extra seconds for last clip (closing shot)
+MERGE_CLIPS = False # If True, merge all clips into one video. If False, save separate clips.
 # Total clip duration = 2.5s. With 58s target, we'll have ~23 clips.
 
 MIN_FREQ = 1800   # Hz. Filter out low frequencies. We only want the "snap".
@@ -141,11 +142,16 @@ def generate_asmr_short(video_path, output_folder):
     
     final_timestamps = [x[0] for x in best_moments]
 
-    # 4. Save Individual Clips
-    print(f"Saving {len(final_timestamps)} separate clips to '{output_folder}/'...")
+    # 4. Save Clips
+    if MERGE_CLIPS:
+        print(f"Preparing {len(final_timestamps)} clips for merging...")
+    else:
+        print(f"Saving {len(final_timestamps)} separate clips to '{output_folder}/'...")
     
     # Create folder if it doesn't exist
     os.makedirs(output_folder, exist_ok=True)
+    
+    clips_to_merge = []
     
     for idx, t_event in enumerate(final_timestamps, start=1):
         # Check if this is the last clip
@@ -166,37 +172,72 @@ def generate_asmr_short(video_path, output_folder):
         # Micro-fade audio (essential to avoid 'pop')
         sub = sub.audio_fadein(0.05).audio_fadeout(0.05)
         
-        # Save with timestamp in name for guaranteed sorting
-        time_marker = f"{int(t_event):04d}s"
-        output_filename = os.path.join(output_folder, f"clip_{idx:03d}_at_{time_marker}.mp4")
-        
-        # Get encoding preset
-        preset = GPU_PRESETS.get(ENCODING_PRESET, GPU_PRESETS["nvidia"])
-        
-        # Build ffmpeg parameters
-        ffmpeg_params = [
-            "-pix_fmt", "yuv420p",
-            preset["quality_param"], preset["quality_value"],
-            "-b:a", AUDIO_BITRATE,
-        ] + preset["extra_params"]
-        
+        if MERGE_CLIPS:
+            clips_to_merge.append(sub)
+        else:
+            # Save with timestamp in name for guaranteed sorting
+            time_marker = f"{int(t_event):04d}s"
+            output_filename = os.path.join(output_folder, f"clip_{idx:03d}_at_{time_marker}.mp4")
+            
+            # Get encoding preset
+            preset = GPU_PRESETS.get(ENCODING_PRESET, GPU_PRESETS["nvidia"])
+            
+            # Build ffmpeg parameters
+            ffmpeg_params = [
+                "-pix_fmt", "yuv420p",
+                preset["quality_param"], preset["quality_value"],
+                "-b:a", AUDIO_BITRATE,
+            ] + preset["extra_params"]
+            
+            try:
+                sub.write_videofile(
+                    output_filename,
+                    codec=preset["codec"],
+                    audio_codec="aac",
+                    fps=clip.fps,  # Keep original FPS
+                    preset=preset["preset"],
+                    bitrate=None,  # Disable fixed bitrate for quality-based encoding
+                    threads=THREADS,
+                    logger=None,
+                    ffmpeg_params=ffmpeg_params
+                )
+                print(f"  ✓ Clip {idx}/{len(final_timestamps)}: {output_filename}")
+            except Exception as e:
+                print(f"  ✗ Error on clip {idx}: {e}")
+
+    if MERGE_CLIPS and clips_to_merge:
+        print(f"Merging {len(clips_to_merge)} clips into one video...")
         try:
-            sub.write_videofile(
+            final_clip = concatenate_videoclips(clips_to_merge)
+            
+            output_filename = os.path.join(output_folder, "final_short.mp4")
+            
+            # Get encoding preset
+            preset = GPU_PRESETS.get(ENCODING_PRESET, GPU_PRESETS["nvidia"])
+            
+            # Build ffmpeg parameters
+            ffmpeg_params = [
+                "-pix_fmt", "yuv420p",
+                preset["quality_param"], preset["quality_value"],
+                "-b:a", AUDIO_BITRATE,
+            ] + preset["extra_params"]
+            
+            final_clip.write_videofile(
                 output_filename,
                 codec=preset["codec"],
                 audio_codec="aac",
-                fps=clip.fps,  # Keep original FPS
+                fps=clip.fps,
                 preset=preset["preset"],
-                bitrate=None,  # Disable fixed bitrate for quality-based encoding
+                bitrate=None,
                 threads=THREADS,
                 logger=None,
                 ffmpeg_params=ffmpeg_params
             )
-            print(f"  ✓ Clip {idx}/{len(final_timestamps)}: {output_filename}")
+            print(f"  ✓ Saved merged video: {output_filename}")
         except Exception as e:
-            print(f"  ✗ Error on clip {idx}: {e}")
+            print(f"  ✗ Error saving merged video: {e}")
 
-    print(f"\n✅ Completed '{os.path.basename(video_path)}'! {len(final_timestamps)} clips saved.")
+    print(f"\n✅ Completed '{os.path.basename(video_path)}'!")
     
     clip.close()
 
