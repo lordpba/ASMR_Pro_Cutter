@@ -28,6 +28,14 @@ The program analyzes video audio using three metrics:
 
 It combines these parameters to create a "crispness" index and automatically selects the best moments.
 
+## 📺 Example Result
+
+See what ASMR Pro Cutter can do! This Short was automatically generated from a 5-minute video:
+
+[![ASMR Short Example](https://img.youtube.com/vi/YT9CBc25t3E/0.jpg)](https://www.youtube.com/shorts/YT9CBc25t3E)
+
+> [Watch on YouTube](https://www.youtube.com/shorts/YT9CBc25t3E)
+
 ## 📦 Installation
 
 ### Prerequisites
