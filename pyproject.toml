@@ -8,7 +8,7 @@ version = "1.0.0"
 description = "Automatic tool to cut and create ASMR clips from long videos"
 readme = "README.md"
 requires-python = ">=3.8"
-license = {text = "MIT"}
+license = "MIT"
 authors = [
     {name = "lordpba"}
 ]
@@ -28,3 +28,6 @@ dependencies = [
 [project.scripts]
 asmr-cutter = "gui:main_gui"
 asmr-cutter-cli = "main:process_all_videos"
+
+[tool.setuptools]
+py-modules = ["main", "gui"]
