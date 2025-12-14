@@ -3,6 +3,7 @@ import tempfile
 import numpy as np
 import librosa
 from moviepy.editor import VideoFileClip, concatenate_videoclips
+from moviepy.audio.fx.all import audio_normalize
 from scipy.signal import find_peaks
 
 # --- DIRECTOR PARAMETERS (Tweak these to change the "feel") ---
@@ -15,6 +16,7 @@ PRE_ROLL = 1.2    # Seconds to show BEFORE the click
 POST_ROLL = 1.3   # Seconds to show AFTER the click
 FINAL_CLIP_EXTRA = 2.0  # Extra seconds for last clip (closing shot)
 MERGE_CLIPS = False # If True, merge all clips into one video. If False, save separate clips.
+AUDIO_NORMALIZE = False # If True, normalize audio for each clip
 # Total clip duration = 2.5s. With 58s target, we'll have ~23 clips.
 
 MIN_FREQ = 1800   # Hz. Filter out low frequencies. We only want the "snap".
@@ -171,6 +173,10 @@ def generate_asmr_short(video_path, output_folder):
         
         # Micro-fade audio (essential to avoid 'pop')
         sub = sub.audio_fadein(0.05).audio_fadeout(0.05)
+        
+        # Normalize audio if requested
+        if AUDIO_NORMALIZE:
+            sub = sub.fx(audio_normalize)
         
         if MERGE_CLIPS:
             clips_to_merge.append(sub)

@@ -53,6 +53,7 @@ class ASMRCutterGUI:
         self.audio_bitrate = tk.StringVar(value=main.AUDIO_BITRATE)
         self.threads = tk.IntVar(value=main.THREADS)
         self.merge_clips = tk.BooleanVar(value=main.MERGE_CLIPS)
+        self.audio_normalize = tk.BooleanVar(value=main.AUDIO_NORMALIZE)
         self.processing = False
         
         # Load saved settings if exist
@@ -147,7 +148,8 @@ Features:
             "encoding_quality": self.encoding_quality.get(),
             "audio_bitrate": self.audio_bitrate.get(),
             "threads": self.threads.get(),
-            "merge_clips": self.merge_clips.get()
+            "merge_clips": self.merge_clips.get(),
+            "audio_normalize": self.audio_normalize.get()
         }
         try:
             with open(SETTINGS_FILE, 'w') as f:
@@ -178,6 +180,7 @@ Features:
             self.audio_bitrate.set(settings.get("audio_bitrate", main.AUDIO_BITRATE))
             self.threads.set(settings.get("threads", main.THREADS))
             self.merge_clips.set(settings.get("merge_clips", main.MERGE_CLIPS))
+            self.audio_normalize.set(settings.get("audio_normalize", main.AUDIO_NORMALIZE))
         except Exception as e:
             print(f"Error loading settings: {e}")
         
@@ -368,6 +371,17 @@ Features:
         ).grid(row=1, column=1, sticky=tk.W, padx=10)
         tk.Label(advanced_grid, text="(Audio analysis precision - lower = more precise)", font=("Segoe UI", 8, "italic"), fg="#666").grid(row=1, column=2, sticky=tk.W, padx=10)
         
+        # Audio Normalize
+        tk.Label(advanced_grid, text="Audio Normalize:", font=("Segoe UI", 9)).grid(row=2, column=0, sticky=tk.W, pady=5)
+        tk.Checkbutton(
+            advanced_grid,
+            text="Normalize audio levels (max volume)",
+            variable=self.audio_normalize,
+            font=("Segoe UI", 9),
+            onvalue=True,
+            offvalue=False
+        ).grid(row=2, column=1, columnspan=2, sticky=tk.W, padx=5)
+        
         # Encoding settings
         encoding_frame = tk.LabelFrame(main_frame, text="🎞️ Encoding Settings", font=("Segoe UI", 10, "bold"), padx=10, pady=10)
         encoding_frame.pack(fill=tk.X, pady=(0, 10))
@@ -549,6 +563,7 @@ Features:
         main.AUDIO_BITRATE = self.audio_bitrate.get()
         main.THREADS = self.threads.get()
         main.MERGE_CLIPS = self.merge_clips.get()
+        main.AUDIO_NORMALIZE = self.audio_normalize.get()
         
         # Start in separate thread
         self.processing = True
