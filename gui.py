@@ -186,26 +186,26 @@ Features:
         
     def setup_ui(self):
         # Header
-        header_frame = tk.Frame(self.root, bg="#2b2b2b", height=80)
+        header_frame = tk.Frame(self.root, bg="#2b2b2b", height=50)
         header_frame.pack(fill=tk.X, padx=0, pady=0)
         header_frame.pack_propagate(False)
         
         title = tk.Label(
             header_frame, 
             text="🎬 ASMR Pro Cutter",
-            font=("Segoe UI", 20, "bold"),
+            font=("Segoe UI", 16, "bold"),
             bg="#2b2b2b",
             fg="white"
         )
-        title.pack(pady=20)
+        title.pack(pady=10)
         
         # Main content
-        main_frame = tk.Frame(self.root, padx=20, pady=15)
+        main_frame = tk.Frame(self.root, padx=10, pady=5)
         main_frame.pack(fill=tk.BOTH, expand=True)
         
         # 1. Video Input
-        video_frame = tk.LabelFrame(main_frame, text="📹 Source Video", font=("Segoe UI", 10, "bold"), padx=10, pady=10)
-        video_frame.pack(fill=tk.X, pady=(0, 10))
+        video_frame = tk.LabelFrame(main_frame, text="📹 Source Video", font=("Segoe UI", 9, "bold"), padx=5, pady=5)
+        video_frame.pack(fill=tk.X, pady=(0, 5))
         
         video_input_frame = tk.Frame(video_frame)
         video_input_frame.pack(fill=tk.X)
@@ -226,13 +226,13 @@ Features:
             fg="white",
             cursor="hand2",
             relief=tk.FLAT,
-            padx=15,
-            pady=5
+            padx=10,
+            pady=2
         ).pack(side=tk.RIGHT)
         
         # 2. Output Folder (optional)
-        output_frame = tk.LabelFrame(main_frame, text="📁 Output Folder (optional - leave empty for auto)", font=("Segoe UI", 10, "bold"), padx=10, pady=10)
-        output_frame.pack(fill=tk.X, pady=(0, 10))
+        output_frame = tk.LabelFrame(main_frame, text="📁 Output Folder (optional - leave empty for auto)", font=("Segoe UI", 9, "bold"), padx=5, pady=5)
+        output_frame.pack(fill=tk.X, pady=(0, 5))
         
         output_input_frame = tk.Frame(output_frame)
         output_input_frame.pack(fill=tk.X)
@@ -253,8 +253,8 @@ Features:
             fg="white",
             cursor="hand2",
             relief=tk.FLAT,
-            padx=15,
-            pady=5
+            padx=10,
+            pady=2
         ).pack(side=tk.RIGHT, padx=(0, 5))
         
         tk.Button(
@@ -266,8 +266,8 @@ Features:
             fg="white",
             cursor="hand2",
             relief=tk.FLAT,
-            padx=10,
-            pady=5
+            padx=8,
+            pady=2
         ).pack(side=tk.RIGHT)
         
         # Merge clips option
@@ -278,29 +278,33 @@ Features:
             font=("Segoe UI", 9),
             onvalue=True,
             offvalue=False
-        ).pack(anchor=tk.W, pady=(5, 0))
+        ).pack(anchor=tk.W, pady=(2, 0))
         
-        # 3. Parameters
-        params_frame = tk.LabelFrame(main_frame, text="⚙️ Clip Parameters", font=("Segoe UI", 10, "bold"), padx=10, pady=10)
-        params_frame.pack(fill=tk.X, pady=(0, 10))
+        # Container for side-by-side parameters
+        settings_container = tk.Frame(main_frame)
+        settings_container.pack(fill=tk.X, pady=(0, 5))
+        
+        # 3. Parameters (Left side)
+        params_frame = tk.LabelFrame(settings_container, text="⚙️ Clip Parameters", font=("Segoe UI", 9, "bold"), padx=5, pady=5)
+        params_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 5))
         
         # Grid for parameters
         params_grid = tk.Frame(params_frame)
         params_grid.pack(fill=tk.X)
         
         # Target Duration
-        tk.Label(params_grid, text="Total target duration (s):", font=("Segoe UI", 9)).grid(row=0, column=0, sticky=tk.W, pady=5)
+        tk.Label(params_grid, text="Total target duration (s):", font=("Segoe UI", 9)).grid(row=0, column=0, sticky=tk.W, pady=2)
         tk.Spinbox(
             params_grid, 
             from_=10, 
             to=120, 
             textvariable=self.target_duration,
             font=("Segoe UI", 9),
-            width=10
-        ).grid(row=0, column=1, sticky=tk.W, padx=10)
+            width=8
+        ).grid(row=0, column=1, sticky=tk.W, padx=5)
         
         # Pre-roll
-        tk.Label(params_grid, text="Pre-roll (s):", font=("Segoe UI", 9)).grid(row=1, column=0, sticky=tk.W, pady=5)
+        tk.Label(params_grid, text="Pre-roll (s):", font=("Segoe UI", 9)).grid(row=1, column=0, sticky=tk.W, pady=2)
         tk.Spinbox(
             params_grid, 
             from_=0.1, 
@@ -308,12 +312,12 @@ Features:
             increment=0.1,
             textvariable=self.pre_roll,
             font=("Segoe UI", 9),
-            width=10,
+            width=8,
             format="%.1f"
-        ).grid(row=1, column=1, sticky=tk.W, padx=10)
+        ).grid(row=1, column=1, sticky=tk.W, padx=5)
         
         # Post-roll
-        tk.Label(params_grid, text="Post-roll (s):", font=("Segoe UI", 9)).grid(row=2, column=0, sticky=tk.W, pady=5)
+        tk.Label(params_grid, text="Post-roll (s):", font=("Segoe UI", 9)).grid(row=2, column=0, sticky=tk.W, pady=2)
         tk.Spinbox(
             params_grid, 
             from_=0.1, 
@@ -321,12 +325,12 @@ Features:
             increment=0.1,
             textvariable=self.post_roll,
             font=("Segoe UI", 9),
-            width=10,
+            width=8,
             format="%.1f"
-        ).grid(row=2, column=1, sticky=tk.W, padx=10)
+        ).grid(row=2, column=1, sticky=tk.W, padx=5)
         
         # Final clip extra
-        tk.Label(params_grid, text="Final clip extra (s):", font=("Segoe UI", 9)).grid(row=3, column=0, sticky=tk.W, pady=5)
+        tk.Label(params_grid, text="Final clip extra (s):", font=("Segoe UI", 9)).grid(row=3, column=0, sticky=tk.W, pady=2)
         tk.Spinbox(
             params_grid, 
             from_=0.0, 
@@ -334,19 +338,28 @@ Features:
             increment=0.5,
             textvariable=self.final_clip_extra,
             font=("Segoe UI", 9),
-            width=10,
+            width=8,
             format="%.1f"
-        ).grid(row=3, column=1, sticky=tk.W, padx=10)
+        ).grid(row=3, column=1, sticky=tk.W, padx=5)
         
-        # Advanced parameters (collapsible)
-        advanced_frame = tk.LabelFrame(main_frame, text="🔧 Advanced Parameters", font=("Segoe UI", 10, "bold"), padx=10, pady=10)
-        advanced_frame.pack(fill=tk.X, pady=(0, 10))
+        # Clip info duration
+        self.clip_info = tk.Label(
+            params_grid, 
+            text=f"→ Clip: {self.pre_roll.get() + self.post_roll.get():.1f}s",
+            font=("Segoe UI", 8, "italic"),
+            fg="#0078d4"
+        )
+        self.clip_info.grid(row=1, column=2, rowspan=2, sticky=tk.W, padx=5)
+
+        # Advanced parameters (Right side)
+        advanced_frame = tk.LabelFrame(settings_container, text="🔧 Advanced Parameters", font=("Segoe UI", 9, "bold"), padx=5, pady=5)
+        advanced_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
         
         advanced_grid = tk.Frame(advanced_frame)
         advanced_grid.pack(fill=tk.X)
         
         # Min frequency
-        tk.Label(advanced_grid, text="Min frequency (Hz):", font=("Segoe UI", 9)).grid(row=0, column=0, sticky=tk.W, pady=5)
+        tk.Label(advanced_grid, text="Min frequency (Hz):", font=("Segoe UI", 9)).grid(row=0, column=0, sticky=tk.W, pady=2)
         tk.Spinbox(
             advanced_grid, 
             from_=500, 
@@ -354,12 +367,11 @@ Features:
             increment=100,
             textvariable=self.min_freq,
             font=("Segoe UI", 9),
-            width=10
-        ).grid(row=0, column=1, sticky=tk.W, padx=10)
-        tk.Label(advanced_grid, text="(Filter low frequencies - higher = crisper)", font=("Segoe UI", 8, "italic"), fg="#666").grid(row=0, column=2, sticky=tk.W, padx=10)
+            width=8
+        ).grid(row=0, column=1, sticky=tk.W, padx=5)
         
         # Hop length
-        tk.Label(advanced_grid, text="Hop length:", font=("Segoe UI", 9)).grid(row=1, column=0, sticky=tk.W, pady=5)
+        tk.Label(advanced_grid, text="Hop length:", font=("Segoe UI", 9)).grid(row=1, column=0, sticky=tk.W, pady=2)
         tk.Spinbox(
             advanced_grid, 
             from_=128, 
@@ -367,43 +379,42 @@ Features:
             increment=128,
             textvariable=self.hop_length,
             font=("Segoe UI", 9),
-            width=10
-        ).grid(row=1, column=1, sticky=tk.W, padx=10)
-        tk.Label(advanced_grid, text="(Audio analysis precision - lower = more precise)", font=("Segoe UI", 8, "italic"), fg="#666").grid(row=1, column=2, sticky=tk.W, padx=10)
+            width=8
+        ).grid(row=1, column=1, sticky=tk.W, padx=5)
         
         # Audio Normalize
-        tk.Label(advanced_grid, text="Audio Normalize:", font=("Segoe UI", 9)).grid(row=2, column=0, sticky=tk.W, pady=5)
+        tk.Label(advanced_grid, text="Audio Normalize:", font=("Segoe UI", 9)).grid(row=2, column=0, sticky=tk.W, pady=2)
         tk.Checkbutton(
             advanced_grid,
-            text="Normalize audio levels (max volume)",
+            text="Normalize audio",
             variable=self.audio_normalize,
             font=("Segoe UI", 9),
             onvalue=True,
             offvalue=False
-        ).grid(row=2, column=1, columnspan=2, sticky=tk.W, padx=5)
+        ).grid(row=2, column=1, columnspan=2, sticky=tk.W, padx=0)
         
         # Encoding settings
-        encoding_frame = tk.LabelFrame(main_frame, text="🎞️ Encoding Settings", font=("Segoe UI", 10, "bold"), padx=10, pady=10)
-        encoding_frame.pack(fill=tk.X, pady=(0, 10))
+        encoding_frame = tk.LabelFrame(main_frame, text="🎞️ Encoding Settings", font=("Segoe UI", 9, "bold"), padx=5, pady=5)
+        encoding_frame.pack(fill=tk.X, pady=(0, 5))
         
         encoding_grid = tk.Frame(encoding_frame)
         encoding_grid.pack(fill=tk.X)
         
         # GPU Preset
-        tk.Label(encoding_grid, text="GPU Preset:", font=("Segoe UI", 9)).grid(row=0, column=0, sticky=tk.W, pady=5)
+        tk.Label(encoding_grid, text="GPU Preset:", font=("Segoe UI", 9)).grid(row=0, column=0, sticky=tk.W, pady=2)
         preset_combo = ttk.Combobox(
             encoding_grid,
             textvariable=self.encoding_preset,
             values=["nvidia", "intel", "amd"],
             state="readonly",
             font=("Segoe UI", 9),
-            width=12
+            width=10
         )
-        preset_combo.grid(row=0, column=1, sticky=tk.W, padx=10)
+        preset_combo.grid(row=0, column=1, sticky=tk.W, padx=5)
         
         # Codec info label
         self.codec_info = tk.Label(encoding_grid, text="Codec: h264_nvenc", font=("Segoe UI", 8, "italic"), fg="#0078d4")
-        self.codec_info.grid(row=0, column=2, sticky=tk.W, padx=10)
+        self.codec_info.grid(row=0, column=2, sticky=tk.W, padx=5)
         
         # Update codec info when preset changes
         def update_codec_info(*args):
@@ -414,50 +425,38 @@ Features:
         self.encoding_preset.trace_add("write", update_codec_info)
         
         # Quality
-        tk.Label(encoding_grid, text="Quality (CQ):", font=("Segoe UI", 9)).grid(row=1, column=0, sticky=tk.W, pady=5)
+        tk.Label(encoding_grid, text="Quality (CQ):", font=("Segoe UI", 9)).grid(row=0, column=3, sticky=tk.W, pady=2, padx=(15, 0))
         tk.Spinbox(
             encoding_grid,
             from_=0,
             to=51,
             textvariable=self.encoding_quality,
             font=("Segoe UI", 9),
-            width=12
-        ).grid(row=1, column=1, sticky=tk.W, padx=10)
-        tk.Label(encoding_grid, text="(0=lossless, 18=near lossless, 23=high, 28=medium)", font=("Segoe UI", 8, "italic"), fg="#666").grid(row=1, column=2, sticky=tk.W, padx=10)
+            width=5
+        ).grid(row=0, column=4, sticky=tk.W, padx=5)
         
         # Audio bitrate
-        tk.Label(encoding_grid, text="Audio bitrate:", font=("Segoe UI", 9)).grid(row=2, column=0, sticky=tk.W, pady=5)
+        tk.Label(encoding_grid, text="Audio bitrate:", font=("Segoe UI", 9)).grid(row=1, column=0, sticky=tk.W, pady=2)
         audio_combo = ttk.Combobox(
             encoding_grid,
             textvariable=self.audio_bitrate,
             values=["128k", "192k", "256k", "320k"],
             state="readonly",
             font=("Segoe UI", 9),
-            width=12
+            width=10
         )
-        audio_combo.grid(row=2, column=1, sticky=tk.W, padx=10)
-        tk.Label(encoding_grid, text="(320k = maximum quality for ASMR)", font=("Segoe UI", 8, "italic"), fg="#666").grid(row=2, column=2, sticky=tk.W, padx=10)
+        audio_combo.grid(row=1, column=1, sticky=tk.W, padx=5)
         
         # Threads
-        tk.Label(encoding_grid, text="Threads:", font=("Segoe UI", 9)).grid(row=3, column=0, sticky=tk.W, pady=5)
+        tk.Label(encoding_grid, text="Threads:", font=("Segoe UI", 9)).grid(row=1, column=3, sticky=tk.W, pady=2, padx=(15, 0))
         tk.Spinbox(
             encoding_grid,
             from_=1,
             to=16,
             textvariable=self.threads,
             font=("Segoe UI", 9),
-            width=12
-        ).grid(row=3, column=1, sticky=tk.W, padx=10)
-        tk.Label(encoding_grid, text="(Number of CPU threads for encoding)", font=("Segoe UI", 8, "italic"), fg="#666").grid(row=3, column=2, sticky=tk.W, padx=10)
-        
-        # Clip info duration
-        self.clip_info = tk.Label(
-            params_grid, 
-            text=f"→ Single clip duration: {self.pre_roll.get() + self.post_roll.get():.1f}s",
-            font=("Segoe UI", 9, "italic"),
-            fg="#0078d4"
-        )
-        self.clip_info.grid(row=1, column=2, rowspan=2, sticky=tk.W, padx=20)
+            width=5
+        ).grid(row=1, column=4, sticky=tk.W, padx=5)
         
         # Update info when values change
         self.pre_roll.trace_add("write", self.update_clip_info)
@@ -465,39 +464,39 @@ Features:
         
         # 4. Start Button
         button_frame = tk.Frame(main_frame)
-        button_frame.pack(fill=tk.X, pady=(0, 10))
+        button_frame.pack(fill=tk.X, pady=(0, 5))
         
         self.process_btn = tk.Button(
             button_frame,
             text="▶️  START PROCESSING",
             command=self.start_processing,
-            font=("Segoe UI", 12, "bold"),
+            font=("Segoe UI", 11, "bold"),
             bg="#107c10",
             fg="white",
             cursor="hand2",
             relief=tk.FLAT,
             padx=20,
-            pady=12
+            pady=8
         )
         self.process_btn.pack(fill=tk.X)
         
         # Progress bar
         self.progress = ttk.Progressbar(main_frame, mode='indeterminate')
-        self.progress.pack(fill=tk.X, pady=(0, 10))
+        self.progress.pack(fill=tk.X, pady=(0, 5))
         
         # 5. Log Output
-        log_frame = tk.LabelFrame(main_frame, text="📋 Log", font=("Segoe UI", 10, "bold"), padx=10, pady=10)
+        log_frame = tk.LabelFrame(main_frame, text="📋 Log", font=("Segoe UI", 9, "bold"), padx=5, pady=5)
         log_frame.pack(fill=tk.BOTH, expand=True)
         
         self.log_text = scrolledtext.ScrolledText(
             log_frame,
-            font=("Consolas", 10),
+            font=("Consolas", 9),
             bg="#1e1e1e",
             fg="#d4d4d4",
             insertbackground="white",
             wrap=tk.WORD,
             state=tk.DISABLED,
-            height=20
+            height=15
         )
         self.log_text.pack(fill=tk.BOTH, expand=True)
         
